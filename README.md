@@ -4,6 +4,10 @@
 
 Cribsy is a Django-based web application that helps users find compatible flatmates and shared living spaces through verified profiles, home-space listings, request management, and direct communication.
 
+## Live Demo
+
+https://cribsy.onrender.com
+
 ## Features
 
 - User Registration and Authentication
