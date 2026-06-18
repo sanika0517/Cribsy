@@ -1,0 +1,20 @@
+# Virtual Environments
+venv/
+env/
+CribsyFinal/
+
+# Database
+db.sqlite3
+
+# Media
+media/
+
+# Python Cache
+__pycache__/
+*.pyc
+
+# VS Code
+.vscode/
+
+# Environment Variables
+.env

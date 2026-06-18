@@ -1,0 +1,330 @@
+{% extends 'users/base.html' %}
+{% block content %}
+<!-- Hero Section -->
+<div class="jumbotron">
+  <div class="container">
+    <h1>Find Your Vibe, Find Your Crib</h1>
+    <p>Cribsy helps you meet trusted flatmates.</p>
+    <div style="margin-top:14px">
+      <a class="btn btn-primary" href="{% url 'create_profile' %}">Get Started</a>
+      <a class="btn btn-outline" href="{% url 'search' %}">Find Flatmates</a>
+    </div>
+  </div>
+</div>
+
+<!-- Features Section -->
+<section class="content-section container">
+  <h2 class="section-title">Why Choose Cribsy?</h2>
+  <p class="section-subtitle">Connect with like-minded people and find your perfect living situation</p>
+  
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🔍</div>
+      <h3>Smart Matching</h3>
+      <p>Our algorithm matches you with compatible flatmates based on lifestyle, preferences, and living habits.</p>
+    </div>
+    
+    <div class="feature-card">
+      <div class="feature-icon">🛡️</div>
+      <h3>Verified Profiles</h3>
+      <p>All users go through a verification process to ensure a safe and trustworthy community.</p>
+    </div>
+    
+    <div class="feature-card">
+      <div class="feature-icon">💬</div>
+      <h3>Easy Communication</h3>
+      <p>Chat directly with potential flatmates through our built-in messaging system.</p>
+    </div>
+    
+    <div class="feature-card">
+      <div class="feature-icon">🏠</div>
+      <h3>Find Your Space</h3>
+      <p>Browse available rooms or list your own space to find the perfect match.</p>
+    </div>
+    
+    <div class="feature-card">
+      <div class="feature-icon">🌍</div>
+      <h3>Location-Based</h3>
+      <p>Find flatmates in your area or explore new neighborhoods with our location search.</p>
+    </div>
+    
+    <div class="feature-card">
+      <div class="feature-icon">⭐</div>
+      <h3>Community Reviews</h3>
+      <p>Read reviews from previous flatmates to make informed decisions.</p>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="how-it-works-section">
+  <div class="container">
+    <div class="how-it-works-header">
+      <span class="section-eyebrow">Simple Process</span>
+      <h2 class="section-title">How It Works</h2>
+      <p class="section-subtitle">Getting started is simple and takes just a few minutes. Follow these easy steps to find your perfect flatmate.</p>
+    </div>
+    
+    <div class="steps-container">
+      <div class="step-item" data-step="1">
+        <div class="step-visual">
+          <div class="step-number">1</div>
+          <div class="step-icon">👤</div>
+        </div>
+        <div class="step-content">
+          <h3>Create Your Profile</h3>
+          <p>Sign up and build your profile. Share your lifestyle, preferences, hobbies, and what you're looking for in a flatmate. Add photos and verify your identity for trust.</p>
+        </div>
+        <div class="step-connector"></div>
+      </div>
+      
+      <div class="step-item" data-step="2">
+        <div class="step-visual">
+          <div class="step-number">2</div>
+          <div class="step-icon">🔍</div>
+        </div>
+        <div class="step-content">
+          <h3>Browse & Match</h3>
+          <p>Browse through verified profiles or use our smart matching algorithm to find compatible flatmates based on location, lifestyle, budget, and preferences.</p>
+        </div>
+        <div class="step-connector"></div>
+      </div>
+      
+      <div class="step-item" data-step="3">
+        <div class="step-visual">
+          <div class="step-number">3</div>
+          <div class="step-icon">💬</div>
+        </div>
+        <div class="step-content">
+          <h3>Connect & Chat</h3>
+          <p>Start conversations with potential matches through our secure messaging system. Get to know them, ask questions, and build trust before making a decision.</p>
+        </div>
+        <div class="step-connector"></div>
+      </div>
+      
+      <div class="step-item" data-step="4">
+        <div class="step-visual">
+          <div class="step-number">4</div>
+          <div class="step-icon">🏠</div>
+        </div>
+        <div class="step-content">
+          <h3>Find Your Crib</h3>
+          <p>Once you've found your perfect match, plan your move together! Browse home spaces, schedule viewings, and start your new living adventure.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials Section with Slider -->
+<section class="testimonials-section">
+  <div class="container">
+    <div class="testimonials-header">
+      <span class="section-eyebrow">Success Stories</span>
+      <h2 class="section-title">What Our Users Say</h2>
+      <p class="section-subtitle">Real experiences from people who found their perfect flatmates</p>
+    </div>
+    
+    <div class="testimonials-slider-wrapper">
+      <div class="testimonials-slider" id="testimonialsSlider">
+    {% if feedbacks %}
+      {% for feedback in feedbacks %}
+        <div class="testimonial-card">
+          <div class="rating-display" style="margin-bottom:12px;font-size:1.2rem">
+            {% for i in "12345" %}
+              <span class="star {% if forloop.counter <= feedback.rating %}filled{% endif %}" style="filter:{% if forloop.counter <= feedback.rating %}grayscale(0){% else %}grayscale(1) opacity(0.3){% endif %}">⭐</span>
+            {% endfor %}
+          </div>
+          <p class="testimonial-text">"{{ feedback.comment }}"</p>
+          <div class="testimonial-author" style="display:flex;gap:10px;align-items:center">
+            {% with profile=feedback.user.profile %}
+              {% if profile.full_name %}
+                {% with initials=profile.full_name|slice:":2"|upper %}
+                  <div class="author-avatar" style="background:var(--gradient-primary);color:var(--white);width:44px;height:44px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700">{{ initials }}</div>
+                {% endwith %}
+                <div class="author-info">
+                  <h4>{{ profile.full_name }}</h4>
+                  {% if profile.city %}
+                    <p style="color:var(--text-secondary);margin:0">{{ profile.city }}{% if profile.state %}, {{ profile.state }}{% endif %}</p>
+                  {% else %}
+                    <p style="color:var(--text-secondary);margin:0">Cribsy User</p>
+                  {% endif %}
+                </div>
+              {% else %}
+                {% with initials=feedback.user.username|slice:":2"|upper %}
+                  <div class="author-avatar" style="background:var(--gradient-primary);color:var(--white);width:44px;height:44px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700">{{ initials }}</div>
+                {% endwith %}
+                <div class="author-info">
+                  <h4>{{ feedback.user.username|title }}</h4>
+                  {% if profile.city %}
+                    <p style="color:var(--text-secondary);margin:0">{{ profile.city }}{% if profile.state %}, {{ profile.state }}{% endif %}</p>
+                  {% else %}
+                    <p style="color:var(--text-secondary);margin:0">Cribsy User</p>
+                  {% endif %}
+                </div>
+              {% endif %}
+            {% endwith %}
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <!-- Fallback testimonials if no feedback available -->
+      <div class="testimonial-card">
+        <p class="testimonial-text">"Cribsy made it so easy to find my perfect flatmate! The matching algorithm really understood what I was looking for, and I connected with Sarah within a week."</p>
+        <div class="testimonial-author" style="display:flex;gap:10px;align-items:center">
+          <div class="author-avatar" style="background:var(--gradient-primary);color:var(--white);width:44px;height:44px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700">MJ</div>
+          <div class="author-info">
+            <h4>Michael Johnson</h4>
+            <p style="color:var(--text-secondary);margin:0">London, UK</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="testimonial-card">
+        <p class="testimonial-text">"I was skeptical at first, but the verification process gave me confidence. I found two amazing flatmates and we've been living together for over a year now!"</p>
+        <div class="testimonial-author" style="display:flex;gap:10px;align-items:center">
+          <div class="author-avatar" style="background:var(--gradient-primary);color:var(--white);width:44px;height:44px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700">ES</div>
+          <div class="author-info">
+            <h4>Emma Smith</h4>
+            <p style="color:var(--text-secondary);margin:0">Manchester, UK</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="testimonial-card">
+        <p class="testimonial-text">"Moving to a new city was daunting, but Cribsy helped me find not just a flatmate, but a genuine friend. The platform is intuitive and the community is great."</p>
+        <div class="testimonial-author" style="display:flex;gap:10px;align-items:center">
+          <div class="author-avatar" style="background:var(--gradient-primary);color:var(--white);width:44px;height:44px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700">DW</div>
+          <div class="author-info">
+            <h4>David Williams</h4>
+            <p style="color:var(--text-secondary);margin:0">Birmingham, UK</p>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+      </div>
+      
+      <!-- Slider Controls -->
+      <button class="slider-btn slider-btn-prev" id="prevBtn" aria-label="Previous testimonial">
+        <span>←</span>
+      </button>
+      <button class="slider-btn slider-btn-next" id="nextBtn" aria-label="Next testimonial">
+        <span>→</span>
+      </button>
+      
+      <!-- Slider Dots -->
+      <div class="slider-dots" id="sliderDots"></div>
+    </div>
+  </div>
+</section>
+
+<!-- Final CTA Section -->
+<section class="content-section container" style="background:transparent">
+  <div class="center" style="max-width:700px;margin:0 auto">
+    <h2 class="section-title">Ready to Find Your Perfect Flatmate?</h2>
+    <p class="section-subtitle" style="margin-bottom:1rem">Join thousands of people who have already found their ideal living situation. Start your journey today!</p>
+    <a class="btn btn-primary" href="{% url 'signup' %}" style="font-size:1.05rem;padding:12px 22px">Get Started Free</a>
+  </div>
+</section>
+
+<script>
+// Testimonials Slider Functionality
+(function() {
+  const slider = document.getElementById('testimonialsSlider');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const dotsContainer = document.getElementById('sliderDots');
+  
+  if (!slider) return;
+  
+  const cards = slider.querySelectorAll('.testimonial-card');
+  if (cards.length === 0) return;
+  
+  let currentIndex = 0;
+  const cardsPerView = window.innerWidth >= 1024 ? 3 : window.innerWidth >= 768 ? 2 : 1;
+  const totalSlides = Math.ceil(cards.length / cardsPerView);
+  
+  // Create dots
+  for (let i = 0; i < totalSlides; i++) {
+    const dot = document.createElement('button');
+    dot.className = 'slider-dot' + (i === 0 ? ' active' : '');
+    dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
+    dot.addEventListener('click', () => goToSlide(i));
+    dotsContainer.appendChild(dot);
+  }
+  
+  function updateSlider() {
+    const cardWidth = cards[0].offsetWidth + 32; // card width + gap
+    slider.scrollTo({
+      left: currentIndex * cardWidth * cardsPerView,
+      behavior: 'smooth'
+    });
+    
+    // Update dots
+    const dots = dotsContainer.querySelectorAll('.slider-dot');
+    dots.forEach((dot, index) => {
+      dot.classList.toggle('active', index === currentIndex);
+    });
+  }
+  
+  function goToSlide(index) {
+    currentIndex = Math.max(0, Math.min(index, totalSlides - 1));
+    updateSlider();
+  }
+  
+  function nextSlide() {
+    currentIndex = (currentIndex + 1) % totalSlides;
+    updateSlider();
+  }
+  
+  function prevSlide() {
+    currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+    updateSlider();
+  }
+  
+  if (prevBtn) prevBtn.addEventListener('click', prevSlide);
+  if (nextBtn) nextBtn.addEventListener('click', nextSlide);
+  
+  // Auto-play slider
+  let autoPlayInterval = setInterval(nextSlide, 5000);
+  
+  // Pause on hover
+  slider.addEventListener('mouseenter', () => clearInterval(autoPlayInterval));
+  slider.addEventListener('mouseleave', () => {
+    autoPlayInterval = setInterval(nextSlide, 5000);
+  });
+  
+  // Handle window resize
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      updateSlider();
+    }, 250);
+  });
+  
+  // Intersection Observer for animations
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  };
+  
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, observerOptions);
+  
+  // Observe step items
+  document.querySelectorAll('.step-item').forEach(item => {
+    item.style.opacity = '0';
+    item.style.transform = 'translateY(30px)';
+    item.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+    observer.observe(item);
+  });
+})();
+</script>
+{% endblock %}

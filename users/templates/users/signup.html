@@ -1,0 +1,102 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+    <title>Sign Up</title>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-greeting">
+            <p class="auth-eyebrow">Welcome to Cribsy</p>
+            <h2>Create your cozy corner</h2>
+            <p class="subtitle">Join the community and unlock curated stays & roommates.</p>
+        </div>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="auth-alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% if form %}
+        <form method="POST" action="{% url 'signup' %}" id="signupForm">
+            {% csrf_token %}
+            
+            <!-- Username Field -->
+            <div class="auth-field">
+                <label for="id_username">Username</label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                    <div class="auth-error">
+                        {% for error in form.username.errors %}
+                            <small>{{ error }}</small>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <small style="color: var(--text-secondary); font-size: 0.875rem; display: block; margin-top: 4px;">Username must be at least 8 characters long.</small>
+            </div>
+            
+            <!-- Email Field -->
+            <div class="auth-field">
+                <label for="id_email">Email</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <div class="auth-error">
+                        {% for error in form.email.errors %}
+                            <small>{{ error }}</small>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- Password Field -->
+            <div class="auth-field">
+                <label for="id_password1">Password</label>
+                {{ form.password1 }}
+                {% if form.password1.errors %}
+                    <div class="auth-error">
+                        {% for error in form.password1.errors %}
+                            <small>{{ error }}</small>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <small style="color: var(--text-secondary); font-size: 0.875rem; display: block; margin-top: 4px;">Password must contain at least one capital letter and one special character.</small>
+            </div>
+            
+            <!-- Confirm Password Field -->
+            <div class="auth-field">
+                <label for="id_password2">Confirm Password</label>
+                {{ form.password2 }}
+                {% if form.password2.errors %}
+                    <div class="auth-error">
+                        {% for error in form.password2.errors %}
+                            <small>{{ error }}</small>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                {% if form.password2.help_text %}
+                    <small style="color: var(--text-secondary); font-size: 0.875rem; display: block; margin-top: 4px;">{{ form.password2.help_text }}</small>
+                {% endif %}
+            </div>
+            
+            <!-- Non-field errors -->
+            {% if form.non_field_errors %}
+                <div class="auth-error">
+                    {% for error in form.non_field_errors %}
+                        <small>{{ error }}</small>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            
+            <button type="submit" class="auth-submit-btn">Sign Up</button>
+        </form>
+        {% else %}
+        <div class="auth-alert">
+            Form not available. Please refresh the page.
+        </div>
+        {% endif %}
+        <p class="auth-switch">Already a member? <a href="{% url 'login' %}">Log in instead</a></p>
+    </div>
+</body>
+</html>

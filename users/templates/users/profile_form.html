@@ -1,0 +1,490 @@
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+<div class="profile-shell">
+  <div class="profile-hero">
+    <p class="profile-eyebrow">Profile settings</p>
+    <h2>Edit your details</h2>
+    <p class="profile-hero-subtitle">Keep your information up to date so matches can understand you better.</p>
+  </div>
+
+  <div class="profile-card">
+    <form method="post" enctype="multipart/form-data" class="profile-form" id="profileForm">
+      {% csrf_token %}
+      
+      <!-- Render form fields manually for better control -->
+      <div class="form-group">
+        <label for="{{ form.full_name.id_for_label }}">{{ form.full_name.label }}</label>
+        {{ form.full_name }}
+        {% if form.full_name.errors %}
+          <div class="field-error">{{ form.full_name.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.gender.id_for_label }}">{{ form.gender.label }}</label>
+        {{ form.gender }}
+        {% if form.gender.errors %}
+          <div class="field-error">{{ form.gender.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.dob.id_for_label }}">{{ form.dob.label }}</label>
+        <input type="text" 
+               id="{{ form.dob.id_for_label }}" 
+               name="{{ form.dob.name }}" 
+               value="{{ form.dob.value|default:'' }}"
+               class="date-picker-input"
+               placeholder="Click to select date of birth"
+               readonly>
+        {% if form.dob.errors %}
+          <div class="field-error">{{ form.dob.errors }}</div>
+        {% endif %}
+        <small class="field-hint">📅 Click to open calendar picker with easy year selection</small>
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.age.id_for_label }}">{{ form.age.label }}</label>
+        {{ form.age }}
+        {% if form.age.errors %}
+          <div class="field-error">{{ form.age.errors }}</div>
+        {% endif %}
+        <small class="field-hint">Auto-calculated from date of birth</small>
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.phone.id_for_label }}">{{ form.phone.label }}</label>
+        {{ form.phone }}
+        {% if form.phone.errors %}
+          <div class="field-error">{{ form.phone.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.area.id_for_label }}">{{ form.area.label }} <span style="color: var(--primary); font-size: 0.9em;">(Recommended)</span></label>
+        {{ form.area }}
+        {% if form.area.errors %}
+          <div class="field-error">{{ form.area.errors }}</div>
+        {% endif %}
+        <small class="field-hint">Enter your area/locality (e.g., Koramangala, Bandra, Connaught Place)</small>
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.city.id_for_label }}">{{ form.city.label }}</label>
+        {{ form.city }}
+        {% if form.city.errors %}
+          <div class="field-error">{{ form.city.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.state.id_for_label }}">{{ form.state.label }}</label>
+        {{ form.state }}
+        {% if form.state.errors %}
+          <div class="field-error">{{ form.state.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.qualification.id_for_label }}">{{ form.qualification.label }}</label>
+        {{ form.qualification }}
+        {% if form.qualification.errors %}
+          <div class="field-error">{{ form.qualification.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.occupation.id_for_label }}">{{ form.occupation.label }}</label>
+        {{ form.occupation }}
+        {% if form.occupation.errors %}
+          <div class="field-error">{{ form.occupation.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.budget.id_for_label }}">{{ form.budget.label }}</label>
+        {{ form.budget }}
+        {% if form.budget.errors %}
+          <div class="field-error">{{ form.budget.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-row-2">
+        <div class="form-group">
+          <label for="{{ form.religion.id_for_label }}">{{ form.religion.label }}</label>
+          {{ form.religion }}
+          {% if form.religion.errors %}
+            <div class="field-error">{{ form.religion.errors }}</div>
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          <label for="{{ form.marital_status.id_for_label }}">{{ form.marital_status.label }}</label>
+          {{ form.marital_status }}
+          {% if form.marital_status.errors %}
+            <div class="field-error">{{ form.marital_status.errors }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.hobbies.id_for_label }}">{{ form.hobbies.label }}</label>
+        {{ form.hobbies }}
+        {% if form.hobbies.errors %}
+          <div class="field-error">{{ form.hobbies.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.lifestyle.id_for_label }}">{{ form.lifestyle.label }}</label>
+        {{ form.lifestyle }}
+        {% if form.lifestyle.errors %}
+          <div class="field-error">{{ form.lifestyle.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.bio.id_for_label }}">{{ form.bio.label }}</label>
+        {{ form.bio }}
+        {% if form.bio.errors %}
+          <div class="field-error">{{ form.bio.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.photo.id_for_label }}">{{ form.photo.label }}</label>
+        {{ form.photo }}
+        {% if form.photo.errors %}
+          <div class="field-error">{{ form.photo.errors }}</div>
+        {% endif %}
+        {% if form.instance.photo %}
+          <div class="current-photo">
+            <p>Current photo:</p>
+            <img src="{{ form.instance.photo.url }}" alt="Current photo" style="max-width: 200px; border-radius: 12px; margin-top: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.id_proof.id_for_label }}">
+          {{ form.id_proof.label }}
+          <span class="required-badge">*</span>
+        </label>
+        {{ form.id_proof }}
+        {% if form.id_proof.errors %}
+          <div class="field-error">{{ form.id_proof.errors }}</div>
+        {% endif %}
+        <small class="field-hint">📄 Upload Aadhaar, Passport, Driving License, or other valid government ID proof (PDF, JPG, PNG)</small>
+        {% if form.instance.id_proof %}
+          <div class="current-file">
+            <p>Current ID proof: <a href="{{ form.instance.id_proof.url }}" target="_blank">View uploaded file</a></p>
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="profile-actions">
+        <button type="submit" class="profile-submit"><span>Save changes</span></button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<style>
+.form-group {
+  margin-bottom: 24px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: var(--gray-700);
+  font-size: 0.95rem;
+}
+
+.required-badge {
+  color: var(--error);
+  margin-left: 4px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 14px 18px;
+  border-radius: 12px;
+  border: 2px solid var(--gray-200);
+  background: rgba(15, 15, 30, 0.8);
+  backdrop-filter: blur(10px);
+  font-size: 1rem;
+  font-family: inherit;
+  transition: all 0.3s;
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.3);
+  transform: translateY(-2px);
+}
+
+.form-group input[readonly] {
+  background: rgba(26, 26, 46, 0.8);
+  cursor: pointer;
+}
+
+.form-group input[readonly]:focus {
+  background: rgba(26, 26, 46, 0.9);
+}
+
+.form-group input[readonly].age-input-readonly {
+  background: rgba(139, 92, 246, 0.15);
+  cursor: not-allowed;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.form-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.field-hint {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.875rem;
+  color: var(--gray-500);
+}
+
+.field-error {
+  margin-top: 6px;
+  color: var(--error);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.current-photo {
+  margin-top: 12px;
+}
+
+.current-photo p {
+  margin-bottom: 8px;
+  font-size: 0.875rem;
+  color: var(--gray-600);
+}
+
+.current-file {
+  margin-top: 8px;
+  padding: 12px;
+  background: rgba(139, 92, 246, 0.15);
+  border-radius: 8px;
+  border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+.current-file p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--gray-700);
+}
+
+.current-file a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.current-file a:hover {
+  text-decoration: underline;
+}
+
+/* Flatpickr customization - Better calendar with easy year selection */
+.flatpickr-calendar {
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  font-family: inherit;
+  z-index: 9999 !important;
+}
+
+.flatpickr-month {
+  background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+  color: white;
+  border-radius: 16px 16px 0 0;
+  padding: 16px;
+}
+
+.flatpickr-current-month {
+  color: white;
+  font-weight: 700;
+  font-size: 1.125rem;
+}
+
+.flatpickr-prev-month,
+.flatpickr-next-month {
+  color: white;
+  fill: white;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+
+.flatpickr-prev-month:hover,
+.flatpickr-next-month:hover {
+  background: rgba(139, 92, 246, 0.2);
+}
+
+.flatpickr-weekdays {
+  background: rgba(139, 92, 246, 0.2);
+  padding: 12px 0;
+}
+
+.flatpickr-weekday {
+  color: var(--gray-700);
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.flatpickr-day {
+  border-radius: 8px;
+  margin: 2px;
+  transition: all 0.2s;
+}
+
+.flatpickr-day.selected {
+  background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+  border-color: transparent;
+  color: white;
+  font-weight: 700;
+}
+
+.flatpickr-day:hover {
+  background: rgba(139, 92, 246, 0.3);
+  transform: scale(1.1);
+}
+
+.flatpickr-day.today {
+  border-color: var(--primary);
+  font-weight: 700;
+}
+
+.flatpickr-day.flatpickr-disabled {
+  opacity: 0.3;
+}
+
+/* Year/Month selector styling */
+.flatpickr-monthDropdown-months,
+.flatpickr-monthDropdown-months .flatpickr-monthDropdown-month {
+  background: transparent;
+  color: white;
+  border: none;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.flatpickr-monthDropdown-months:hover {
+  background: rgba(139, 92, 246, 0.2);
+}
+
+.flatpickr-yearDropdown {
+  background: transparent;
+  color: white;
+  border: none;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.flatpickr-yearDropdown:hover {
+  background: rgba(139, 92, 246, 0.2);
+}
+
+@media (max-width: 768px) {
+  .form-row-2 {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+(function() {
+  'use strict';
+  
+  // Wait for DOM and Flatpickr to be ready
+  function initDatePicker() {
+    const dobInput = document.getElementById('id_dob');
+    const ageInput = document.querySelector('input[name="age"]');
+    
+    if (!dobInput) {
+      console.error('Date of birth input not found');
+      return;
+    }
+    
+    // Check if Flatpickr is loaded
+    if (typeof flatpickr === 'undefined') {
+      console.error('Flatpickr library not loaded');
+      // Retry after a short delay
+      setTimeout(initDatePicker, 100);
+      return;
+    }
+    
+    // Initialize Flatpickr
+    const fp = flatpickr(dobInput, {
+      dateFormat: "Y-m-d",
+      maxDate: new Date(),
+      minDate: new Date('1900-01-01'),
+      defaultDate: dobInput.value || null,
+      clickOpens: true,
+      allowInput: false,
+      onChange: function(selectedDates, dateStr, instance) {
+        calculateAge(dateStr, ageInput);
+      },
+      onReady: function(selectedDates, dateStr, instance) {
+        // Calculate age if date already exists
+        if (dateStr) {
+          calculateAge(dateStr, ageInput);
+        }
+      }
+    });
+    
+    console.log('Flatpickr initialized successfully');
+  }
+  
+  function calculateAge(dobStr, ageInput) {
+    if (!dobStr || !ageInput) return;
+    
+    const dob = new Date(dobStr);
+    if (isNaN(dob.getTime())) return;
+    
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const monthDiff = today.getMonth() - dob.getMonth();
+    
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+      age--;
+    }
+    
+    ageInput.value = age >= 0 ? age : '';
+  }
+  
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initDatePicker);
+  } else {
+    initDatePicker();
+  }
+})();
+</script>
+{% endblock %}

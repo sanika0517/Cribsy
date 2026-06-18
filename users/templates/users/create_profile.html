@@ -1,0 +1,19 @@
+{% extends 'users/base.html' %}
+{% block content %}
+<div class="profile-shell">
+    <div class="profile-hero">
+        <p class="profile-eyebrow">Profile setup</p>
+        <h2>Craft your Cribsy identity</h2>
+        <p class="profile-hero-subtitle">Share a bit about yourself so future flatmates know why you’d be an amazing match.</p>
+    </div>
+    <div class="profile-card">
+        <form method="POST" enctype="multipart/form-data" class="profile-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="profile-actions">
+                <button type="submit" class="profile-submit">Create profile</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

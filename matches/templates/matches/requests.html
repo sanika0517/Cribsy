@@ -1,0 +1,132 @@
+{% extends 'users/base.html' %}
+{% block content %}
+<div class="container" style="max-width: 1000px; margin: 40px auto;">
+  <div style="margin-bottom: 40px;">
+    <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 12px; background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+      Connection Requests
+    </h2>
+    <p style="color: var(--gray-600); font-size: 1.125rem;">Manage your connection requests and see who you're connected with.</p>
+  </div>
+
+  <!-- Received Requests -->
+  {% if received_requests %}
+  <section style="margin-bottom: 48px;">
+    <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 24px; color: var(--gray-900);">
+      Received Requests ({{ received_requests|length }})
+    </h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px;">
+      {% for req in received_requests %}
+      <div style="background: var(--bg-card); backdrop-filter: blur(20px); border-radius: 20px; padding: 24px; box-shadow: var(--shadow-lg); border: 1px solid rgba(74, 124, 122, 0.3); transition: all 0.3s;">
+        <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
+          {% if req.sender.profile.photo %}
+            <img src="{{ req.sender.profile.photo.url }}" alt="{{ req.sender.username }}" style="width: 60px; height: 60px; border-radius: 12px; object-fit: cover; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
+          {% else %}
+            <div style="width: 60px; height: 60px; border-radius: 12px; background: var(--gradient-primary); display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 1.5rem;">
+              {{ req.sender.username|slice:":1"|upper }}
+            </div>
+          {% endif %}
+          <div>
+            <h4 style="margin: 0; font-size: 1.125rem; font-weight: 700; color: var(--gray-900);">
+              {{ req.sender.profile.full_name|default:req.sender.username }}
+            </h4>
+            <p style="margin: 4px 0 0; color: var(--gray-500); font-size: 0.875rem;">@{{ req.sender.username }}</p>
+          </div>
+        </div>
+        <p style="color: var(--gray-500); margin-bottom: 20px; font-size: 0.9375rem;">
+          {{ req.sender.profile.bio|default:"No bio available."|truncatechars:100 }}
+        </p>
+        <div style="display: flex; gap: 12px;">
+          <a href="{% url 'view_profile' req.sender.username %}" class="btn btn-outline" style="flex: 1; text-align: center;">View Profile</a>
+          <a href="{% url 'accept_request' req.id %}" class="btn btn-primary" style="flex: 1; text-align: center; background: var(--secondary); color: white; border: none;">Accept</a>
+          <a href="{% url 'reject_request' req.id %}" class="btn" style="flex: 1; text-align: center; background: rgba(239, 68, 68, 0.2); color: #FCA5A5; border: 2px solid rgba(239, 68, 68, 0.4);">Reject</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  <!-- Sent Requests -->
+  {% if sent_requests %}
+  <section style="margin-bottom: 48px;">
+    <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 24px; color: var(--gray-900);">
+      Sent Requests ({{ sent_requests|length }})
+    </h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px;">
+      {% for req in sent_requests %}
+      <div style="background: var(--bg-card); backdrop-filter: blur(20px); border-radius: 20px; padding: 24px; box-shadow: var(--shadow-lg); border: 1px solid rgba(74, 124, 122, 0.3);">
+        <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
+          {% if req.receiver.profile.photo %}
+            <img src="{{ req.receiver.profile.photo.url }}" alt="{{ req.receiver.username }}" style="width: 60px; height: 60px; border-radius: 12px; object-fit: cover; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
+          {% else %}
+            <div style="width: 60px; height: 60px; border-radius: 12px; background: var(--gradient-primary); display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 1.5rem;">
+              {{ req.receiver.username|slice:":1"|upper }}
+            </div>
+          {% endif %}
+          <div>
+            <h4 style="margin: 0; font-size: 1.125rem; font-weight: 700; color: var(--gray-900);">
+              {{ req.receiver.profile.full_name|default:req.receiver.username }}
+            </h4>
+            <p style="margin: 4px 0 0; color: var(--gray-500); font-size: 0.875rem;">@{{ req.receiver.username }}</p>
+          </div>
+        </div>
+        <div style="display: flex; gap: 12px; align-items: center;">
+          <span style="padding: 6px 14px; border-radius: 999px; font-size: 0.75rem; font-weight: 600; background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); color: white; text-transform: uppercase; letter-spacing: 0.05em;">
+            Pending
+          </span>
+          <a href="{% url 'cancel_request' req.id %}" class="btn btn-outline" style="margin-left: auto;">Cancel</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  <!-- Connections -->
+  {% if connections %}
+  <section>
+    <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 24px; color: var(--gray-900);">
+      Your Connections ({{ connections|length }})
+    </h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px;">
+      {% for conn in connections %}
+      <div style="background: var(--bg-card); backdrop-filter: blur(20px); border-radius: 20px; padding: 24px; box-shadow: var(--shadow-lg); border: 1px solid rgba(74, 124, 122, 0.3); transition: all 0.3s;">
+        <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
+          {% if conn.user.profile.photo %}
+            <img src="{{ conn.user.profile.photo.url }}" alt="{{ conn.user.username }}" style="width: 60px; height: 60px; border-radius: 12px; object-fit: cover; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
+          {% else %}
+            <div style="width: 60px; height: 60px; border-radius: 12px; background: var(--gradient-primary); display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 1.5rem;">
+              {{ conn.user.username|slice:":1"|upper }}
+            </div>
+          {% endif %}
+          <div>
+            <h4 style="margin: 0; font-size: 1.125rem; font-weight: 700; color: var(--gray-900);">
+              {{ conn.user.profile.full_name|default:conn.user.username }}
+            </h4>
+            <p style="margin: 4px 0 0; color: var(--gray-500); font-size: 0.875rem;">@{{ conn.user.username }}</p>
+          </div>
+        </div>
+        <div style="display: flex; gap: 12px;">
+          <a href="{% url 'view_profile' conn.user.username %}" class="btn btn-outline" style="flex: 1; text-align: center;">View Profile</a>
+          <a href="{% url 'conversation' conn.user.username %}" class="btn btn-primary" style="flex: 1; text-align: center;">Chat</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  <!-- Empty State -->
+  {% if not received_requests and not sent_requests and not connections %}
+  <div style="text-align: center; padding: 60px 20px; background: var(--bg-card); backdrop-filter: blur(20px); border-radius: 24px; box-shadow: var(--shadow-lg); border: 1px solid rgba(74, 124, 122, 0.3);">
+    <div style="font-size: 4rem; margin-bottom: 20px;">📭</div>
+    <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 12px; color: var(--gray-900);">No Requests Yet</h3>
+    <p style="color: var(--gray-500); margin-bottom: 24px; max-width: 400px; margin-left: auto; margin-right: auto;">
+      Start connecting with people by sending connection requests from the search page!
+    </p>
+    <a href="{% url 'search' %}" class="btn btn-primary">Browse Profiles</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
+

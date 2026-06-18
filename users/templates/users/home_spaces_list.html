@@ -1,0 +1,100 @@
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container" style="max-width: 1400px; margin: 40px auto; padding: 0 24px;">
+  <div style="margin-bottom: 40px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+    <div>
+      <h1 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 12px; background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+        🏠 Home Spaces
+      </h1>
+      <p style="color: var(--gray-500); font-size: 1.125rem;">Browse available living spaces shared by our community</p>
+    </div>
+    {% if request.user.is_authenticated %}
+      <a href="{% url 'add_home_space' %}" style="padding: 14px 28px; background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%); color: white; text-decoration: none; border-radius: 12px; font-weight: 700; font-size: 1rem; transition: all 0.3s; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.5);">
+        + Add Your Space
+      </a>
+    {% endif %}
+  </div>
+
+  <!-- Filter -->
+  <div style="background: rgba(26, 26, 46, 0.8); backdrop-filter: blur(20px); border-radius: 20px; padding: 24px; margin-bottom: 32px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6); border: 1px solid rgba(139, 92, 246, 0.3);">
+    <form method="get" style="display: flex; gap: 12px; align-items: end; flex-wrap: wrap;">
+      <div style="flex: 1; min-width: 200px;">
+        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--gray-700);">Filter by City</label>
+        <input type="text" name="city" value="{{ city_filter }}" placeholder="Enter city name" style="width: 100%; padding: 12px; border-radius: 12px; border: 2px solid var(--gray-200); font-size: 1rem;">
+      </div>
+      <button type="submit" style="padding: 12px 24px; background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%); color: white; border: none; border-radius: 12px; font-weight: 600; font-size: 1rem; cursor: pointer;">
+        Search
+      </button>
+      {% if city_filter %}
+        <a href="{% url 'home_spaces_list' %}" style="padding: 12px 24px; background: var(--gray-200); color: var(--gray-700); text-decoration: none; border-radius: 12px; font-weight: 600; font-size: 1rem;">
+          Clear
+        </a>
+      {% endif %}
+    </form>
+  </div>
+
+  <!-- Home Spaces Grid -->
+  {% if spaces_with_ratings %}
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 24px;">
+      {% for item in spaces_with_ratings %}
+        <div style="background: rgba(26, 26, 46, 0.8); backdrop-filter: blur(20px); border-radius: 20px; overflow: hidden; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6); border: 1px solid rgba(139, 92, 246, 0.3); transition: all 0.3s; cursor: pointer;" onclick="window.location='{% url 'home_space_detail' item.space.id %}'">
+          <!-- Photo -->
+          <div style="width: 100%; height: 250px; background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%); position: relative; overflow: hidden;">
+            {% if item.primary_photo %}
+              <img src="{{ item.primary_photo.photo.url }}" alt="{{ item.space.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+            {% else %}
+              <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem;">
+                🏠
+              </div>
+            {% endif %}
+            <!-- Rating Badge -->
+            {% if item.avg_rating > 0 %}
+              <div style="position: absolute; top: 12px; right: 12px; background: rgba(26, 26, 46, 0.9); padding: 8px 12px; border-radius: 20px; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 4px; border: 1px solid rgba(139, 92, 246, 0.3);">
+                ⭐ {{ item.avg_rating }} ({{ item.review_count }})
+              </div>
+            {% endif %}
+          </div>
+          
+          <!-- Content -->
+          <div style="padding: 24px;">
+            <h3 style="margin: 0 0 8px 0; font-size: 1.25rem; font-weight: 700; color: var(--gray-900);">
+              {{ item.space.title }}
+            </h3>
+            <p style="margin: 0 0 12px 0; color: var(--gray-500); font-size: 0.9375rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+              {{ item.space.description|truncatewords:20 }}
+            </p>
+            <div style="display: flex; gap: 16px; margin-bottom: 12px; font-size: 0.875rem; color: var(--gray-500);">
+              {% if item.space.city %}
+                <span>📍 {{ item.space.city }}{% if item.space.state %}, {{ item.space.state }}{% endif %}</span>
+              {% endif %}
+              {% if item.space.rent %}
+                <span>💰 ₹{{ item.space.rent }}/month</span>
+              {% endif %}
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; padding-top: 12px; border-top: 1px solid var(--gray-200);">
+              <div style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 0.875rem;">
+                {{ item.space.user.username|slice:":1"|upper }}
+              </div>
+              <span style="font-weight: 600; color: var(--gray-600);">{{ item.space.user.profile.full_name|default:item.space.user.username }}</span>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div style="text-align: center; padding: 60px 20px; background: rgba(26, 26, 46, 0.8); backdrop-filter: blur(20px); border-radius: 20px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6); border: 1px solid rgba(139, 92, 246, 0.3);">
+      <div style="font-size: 4rem; margin-bottom: 20px;">🏠</div>
+      <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 12px; color: var(--gray-900);">No home spaces found</h3>
+      <p style="color: var(--gray-500); margin-bottom: 24px;">Be the first to share your living space!</p>
+      {% if request.user.is_authenticated %}
+        <a href="{% url 'add_home_space' %}" style="padding: 14px 28px; background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%); color: white; text-decoration: none; border-radius: 12px; font-weight: 700; font-size: 1rem; display: inline-block;">
+          + Add Your Space
+        </a>
+      {% endif %}
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
+

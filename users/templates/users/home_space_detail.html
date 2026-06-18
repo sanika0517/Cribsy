@@ -1,0 +1,183 @@
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container" style="max-width: 1200px; margin: 40px auto; padding: 0 24px;">
+  <!-- Back Button -->
+  <a href="{% url 'home_spaces_list' %}" style="display: inline-flex; align-items: center; gap: 8px; margin-bottom: 24px; color: var(--primary); text-decoration: none; font-weight: 600;">
+    ← Back to Home Spaces
+  </a>
+
+  <!-- Space Header -->
+  <div style="background: rgba(26, 26, 46, 0.8); backdrop-filter: blur(20px); border-radius: 20px; padding: 32px; margin-bottom: 32px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6); border: 1px solid rgba(139, 92, 246, 0.3);">
+    <div style="display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; gap: 20px; margin-bottom: 24px;">
+      <div style="flex: 1;">
+        <h1 style="font-size: 2rem; font-weight: 800; margin-bottom: 12px; color: var(--gray-900);">
+          {{ space.title }}
+        </h1>
+        <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap; margin-bottom: 16px;">
+          {% if space.city %}
+            <span style="color: var(--gray-500);">📍 {{ space.city }}{% if space.state %}, {{ space.state }}{% endif %}</span>
+          {% endif %}
+          {% if space.rent %}
+            <span style="color: var(--gray-500);">💰 ₹{{ space.rent }}/month</span>
+          {% endif %}
+          {% if avg_rating > 0 %}
+            <span style="color: var(--gray-500);">⭐ {{ avg_rating }} ({{ review_count }} reviews)</span>
+          {% endif %}
+        </div>
+        {% if space.address %}
+          <p style="color: var(--gray-500); margin: 0;">{{ space.address }}</p>
+        {% endif %}
+      </div>
+      {% if space.user == request.user %}
+        <div style="display: flex; gap: 12px;">
+          <a href="{% url 'edit_home_space' space.id %}" style="padding: 10px 20px; background: rgba(139, 92, 246, 0.2); color: var(--primary); text-decoration: none; border-radius: 8px; font-weight: 600;">
+            Edit
+          </a>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Owner Info -->
+    <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 20px; border-top: 1px solid var(--gray-300); flex-wrap: wrap; gap: 16px;">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div style="width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1.25rem;">
+          {{ space.user.username|slice:":1"|upper }}
+        </div>
+        <div>
+          <div style="font-weight: 700; color: var(--gray-900);">{{ space.user.profile.full_name|default:space.user.username }}</div>
+          <div style="font-size: 0.875rem; color: var(--gray-500);">Owner</div>
+        </div>
+      </div>
+      
+      <!-- Contact Owner Button -->
+      {% if request.user.is_authenticated and space.user != request.user %}
+        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+          {% if is_matched %}
+            <a href="{% url 'conversation' space.user.username %}" style="padding: 12px 24px; background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%); color: white; text-decoration: none; border-radius: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4); transition: all 0.3s;">
+              💬 Chat with Owner
+            </a>
+          {% elif sent_request %}
+            <span style="padding: 12px 24px; background: rgba(245, 158, 11, 0.2); color: #FCD34D; border: 1px solid rgba(245, 158, 11, 0.4); border-radius: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
+              ⏳ Request Sent
+            </span>
+          {% elif received_request %}
+            <a href="{% url 'requests' %}" style="padding: 12px 24px; background: linear-gradient(135deg, #10B981 0%, #059669 100%); color: white; text-decoration: none; border-radius: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);">
+              ✓ Respond to Request
+            </a>
+          {% else %}
+            <a href="{% url 'send_request' space.user.id %}" style="padding: 12px 24px; background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%); color: white; text-decoration: none; border-radius: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4); transition: all 0.3s;">
+              📧 Contact Owner
+            </a>
+          {% endif %}
+          <a href="{% url 'view_profile' space.user.username %}" style="padding: 12px 24px; background: rgba(139, 92, 246, 0.15); color: var(--primary); text-decoration: none; border-radius: 12px; font-weight: 600; border: 1px solid rgba(139, 92, 246, 0.3); display: inline-flex; align-items: center; gap: 8px;">
+            👤 View Profile
+          </a>
+        </div>
+      {% elif not request.user.is_authenticated %}
+        <a href="{% url 'login' %}" style="padding: 12px 24px; background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%); color: white; text-decoration: none; border-radius: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);">
+          📧 Contact Owner
+        </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Photos Gallery -->
+  {% if photos %}
+    <div style="background: rgba(26, 26, 46, 0.8); backdrop-filter: blur(20px); border-radius: 20px; padding: 32px; margin-bottom: 32px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6); border: 1px solid rgba(139, 92, 246, 0.3);">
+      <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 24px; color: var(--gray-900);">Photos</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px;">
+        {% for photo in photos %}
+          <div style="position: relative; aspect-ratio: 1; border-radius: 12px; overflow: hidden;">
+            <img src="{{ photo.photo.url }}" alt="{{ photo.caption|default:space.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+            {% if photo.caption %}
+              <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); padding: 12px; color: white; font-size: 0.875rem;">
+                {{ photo.caption }}
+              </div>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  <!-- Description -->
+  {% if space.description %}
+    <div style="background: rgba(26, 26, 46, 0.8); backdrop-filter: blur(20px); border-radius: 20px; padding: 32px; margin-bottom: 32px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6); border: 1px solid rgba(139, 92, 246, 0.3);">
+      <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 16px; color: var(--gray-900);">Description</h2>
+      <p style="color: var(--gray-600); line-height: 1.6; white-space: pre-line;">{{ space.description }}</p>
+      {% if space.available_from %}
+        <div style="margin-top: 16px; padding: 12px; background: rgba(139, 92, 246, 0.2); border-radius: 8px; color: var(--primary); font-weight: 600; border: 1px solid rgba(139, 92, 246, 0.3);">
+          📅 Available from: {{ space.available_from|date:"F d, Y" }}
+        </div>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <!-- Reviews Section -->
+  <div style="background: rgba(26, 26, 46, 0.8); backdrop-filter: blur(20px); border-radius: 20px; padding: 32px; margin-bottom: 32px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6); border: 1px solid rgba(139, 92, 246, 0.3);">
+    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 24px; color: var(--gray-900);">
+      Reviews ({{ review_count }})
+    </h2>
+
+    <!-- Add Review Form -->
+    {% if request.user.is_authenticated and space.user != request.user %}
+      {% if not user_review %}
+        <div style="background: rgba(139, 92, 246, 0.15); border-radius: 12px; padding: 24px; margin-bottom: 32px; border: 1px solid rgba(139, 92, 246, 0.3);">
+          <h3 style="font-size: 1.125rem; font-weight: 700; margin-bottom: 16px; color: var(--gray-900);">Write a Review</h3>
+          <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="submit_review" value="1">
+            <div style="margin-bottom: 16px;">
+              <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--gray-700);">Rating</label>
+              {{ review_form.rating }}
+            </div>
+            <div style="margin-bottom: 16px;">
+              <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--gray-700);">Comment</label>
+              {{ review_form.comment }}
+            </div>
+            <button type="submit" style="padding: 12px 24px; background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+              Submit Review
+            </button>
+          </form>
+        </div>
+      {% else %}
+        <div style="background: rgba(16, 185, 129, 0.2); border-radius: 12px; padding: 16px; margin-bottom: 32px; border: 1px solid rgba(16, 185, 129, 0.3);">
+          <p style="color: var(--gray-600); margin: 0;">You have already reviewed this space.</p>
+        </div>
+      {% endif %}
+    {% endif %}
+
+    <!-- Reviews List -->
+    {% if reviews %}
+      <div style="display: flex; flex-direction: column; gap: 20px;">
+        {% for review in reviews %}
+          <div style="padding: 20px; background: rgba(139, 92, 246, 0.15); border-radius: 12px; border: 1px solid rgba(139, 92, 246, 0.3);">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">
+                  {{ review.reviewer.username|slice:":1"|upper }}
+                </div>
+                <div>
+                  <div style="font-weight: 700; color: var(--gray-900);">{{ review.reviewer.profile.full_name|default:review.reviewer.username }}</div>
+                  <div style="font-size: 0.875rem; color: var(--gray-500);">{{ review.created_at|date:"M d, Y" }}</div>
+                </div>
+              </div>
+              <div style="font-size: 1.25rem;">
+                {% for i in "12345" %}
+                  <span style="{% if forloop.counter <= review.rating %}color: #fbbf24;{% else %}color: var(--gray-300);{% endif %}">⭐</span>
+                {% endfor %}
+              </div>
+            </div>
+            <p style="color: var(--gray-600); line-height: 1.6; margin: 0;">{{ review.comment }}</p>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p style="color: var(--gray-500); text-align: center; padding: 40px;">No reviews yet. Be the first to review!</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+

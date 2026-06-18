@@ -1,0 +1,165 @@
+/* CSS Variables - Soft Muted Palette */
+:root {
+  --primary: #4A7C7A;
+  --secondary: #8FAF9F;
+  --accent: #6B8BA4;
+  --gradient-primary: linear-gradient(135deg, #4A7C7A 0%, #8FAF9F 100%);
+  --bg-primary: #F7F6F3;
+  --bg-card: #FFFFFF;
+  --text-primary: #3E3E3E;
+  --text-secondary: #6B6B6B;
+  --gray-200: #D4D0C8;
+  --gray-300: #B8B4AC;
+  --white: #FFFFFF;
+  --transition-base: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --radius-md: 12px;
+  --radius-full: 9999px;
+  --shadow-md: 0 4px 6px -1px rgba(62, 62, 62, 0.1), 0 2px 4px -1px rgba(62, 62, 62, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(62, 62, 62, 0.1), 0 4px 6px -2px rgba(62, 62, 62, 0.05);
+  --shadow-soft: 0 4px 20px rgba(74, 124, 122, 0.15);
+}
+
+/* Clean Navbar with Soft Colors */
+.navbar {
+  width: 100%;
+  padding: 0;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-md);
+  color: var(--text-primary);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  border-bottom: 1px solid var(--gray-200);
+  transition: all var(--transition-base);
+}
+
+.navbar::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--gradient-primary);
+  opacity: 1;
+}
+
+.navbar-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 40px;
+}
+
+.brand {
+  font-weight: 700;
+  font-size: 1.75rem;
+  color: var(--primary);
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  text-decoration: none;
+  transition: all var(--transition-base);
+  position: relative;
+}
+
+.brand:hover {
+  transform: scale(1.02);
+  color: var(--primary-dark);
+}
+
+.brand .logo {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  background: var(--gradient-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--white);
+  font-weight: 700;
+  font-size: 1.5rem;
+  box-shadow: var(--shadow-soft);
+  transition: all var(--transition-base);
+}
+
+.brand:hover .logo {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-lg);
+}
+
+.nav-links {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-left: auto;
+}
+
+.nav-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  padding: 10px 18px;
+  border-radius: var(--radius-full);
+  font-weight: 500;
+  font-size: 0.95rem;
+  background: transparent;
+  transition: all var(--transition-base);
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-link::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: var(--gradient-primary);
+  transition: left var(--transition-base);
+  z-index: -1;
+  opacity: 0.1;
+}
+
+.nav-link:hover {
+  color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.nav-link:hover::before {
+  left: 0;
+  opacity: 0.15;
+}
+
+.nav-link:active {
+  transform: translateY(0);
+}
+
+.nav-link.active {
+  color: var(--primary);
+  background: rgba(74, 124, 122, 0.1);
+  font-weight: 600;
+}
+
+.nav-link.active::before {
+  left: 0;
+  opacity: 0.2;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .nav-links {
+    display: none;
+  }
+
+  .navbar-inner {
+    gap: 20px;
+  }
+
+  .brand {
+    font-size: 1.5rem;
+  }
+}

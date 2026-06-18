@@ -1,0 +1,347 @@
+/* CSS Variables - Soft Muted Palette */
+:root {
+  --primary: #4A7C7A;
+  --primary-dark: #3A6B69;
+  --secondary: #8FAF9F;
+  --accent: #6B8BA4;
+  --gradient-primary: linear-gradient(135deg, #4A7C7A 0%, #8FAF9F 100%);
+  --bg-primary: #F7F6F3;
+  --bg-card: #FFFFFF;
+  --text-primary: #3E3E3E;
+  --text-secondary: #6B6B6B;
+  --text-light: #9A9A9A;
+  --white: #FFFFFF;
+  --gray-200: #D4D0C8;
+  --gray-300: #B8B4AC;
+  --gray-400: #9A9A9A;
+  --error: #C97A7A;
+  --transition-base: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --radius-md: 12px;
+  --radius-2xl: 32px;
+  --shadow-sm: 0 1px 3px 0 rgba(62, 62, 62, 0.1), 0 1px 2px 0 rgba(62, 62, 62, 0.06);
+  --shadow-md: 0 4px 6px -1px rgba(62, 62, 62, 0.1), 0 2px 4px -1px rgba(62, 62, 62, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(62, 62, 62, 0.1), 0 4px 6px -2px rgba(62, 62, 62, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(62, 62, 62, 0.1), 0 10px 10px -5px rgba(62, 62, 62, 0.04);
+  --shadow-soft: 0 4px 20px rgba(74, 124, 122, 0.15);
+}
+
+/* Modern Auth Pages with Soft Colors */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg-primary);
+  min-height: 100vh;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Auth Container */
+.auth-container {
+  background: var(--bg-card);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  width: min(480px, 90vw);
+  padding: 48px 40px;
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-xl);
+  text-align: center;
+  animation: fadeUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  z-index: 1;
+  border: 1px solid var(--gray-200);
+  overflow: visible;
+}
+
+.auth-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--gradient-primary);
+  opacity: 0.8;
+}
+
+.auth-greeting {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 32px;
+  animation: fadeInUp 0.6s ease-out 0.2s both;
+}
+
+.auth-eyebrow {
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-light);
+  font-weight: 600;
+}
+
+.auth-container .subtitle {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.auth-container h2 {
+  margin: 0;
+  color: var(--primary);
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  position: relative;
+  z-index: 1;
+}
+
+/* Form Styling */
+.auth-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  animation: fadeInUp 0.6s ease-out 0.4s both;
+  position: relative;
+  z-index: 1;
+}
+
+.auth-container form button {
+  order: 999;
+}
+
+.auth-field {
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.auth-container label {
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.auth-container input {
+  padding: 16px 18px;
+  width: 100%;
+  border-radius: var(--radius-md);
+  border: 2px solid var(--gray-200);
+  background: var(--bg-primary);
+  transition: all var(--transition-base);
+  font-size: 1rem;
+  font-family: inherit;
+  color: var(--text-primary);
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.auth-container input:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: var(--bg-card);
+  box-shadow: 0 0 0 4px rgba(74, 124, 122, 0.1), var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+.auth-container input::placeholder {
+  color: var(--gray-400);
+}
+
+/* Button Styling */
+.auth-container button,
+.auth-submit-btn,
+button[type="submit"] {
+  background: var(--gradient-primary) !important;
+  color: var(--white) !important;
+  padding: 16px 24px !important;
+  border: none !important;
+  border-radius: var(--radius-md) !important;
+  font-size: 1.0625rem !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all var(--transition-base) !important;
+  box-shadow: var(--shadow-md) !important;
+  position: relative !important;
+  overflow: visible !important;
+  margin-top: 24px !important;
+  width: 100% !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  z-index: 100 !important;
+  box-sizing: border-box !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  pointer-events: auto !important;
+  min-height: 50px !important;
+}
+
+.auth-container button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  background: var(--primary-dark);
+}
+
+.auth-container button:active {
+  transform: translateY(0);
+}
+
+/* Ensure submit button is always visible */
+#signupForm button[type="submit"],
+form button[type="submit"].auth-submit-btn {
+  background: var(--gradient-primary) !important;
+  color: var(--white) !important;
+  padding: 16px 24px !important;
+  border: none !important;
+  border-radius: var(--radius-md) !important;
+  font-size: 1.0625rem !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  margin-top: 24px !important;
+  width: 100% !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative !important;
+  z-index: 1000 !important;
+}
+
+.auth-switch {
+  margin-top: 24px;
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+  animation: fadeIn 0.6s ease-out 0.6s both;
+  position: relative;
+  z-index: 1;
+}
+
+.auth-switch a {
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: none;
+  transition: all var(--transition-fast);
+  position: relative;
+}
+
+.auth-switch a::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--primary);
+  transition: width var(--transition-base);
+}
+
+.auth-switch a:hover::after {
+  width: 100%;
+}
+
+.auth-alert {
+  background: rgba(201, 122, 122, 0.1);
+  border: 2px solid rgba(201, 122, 122, 0.3);
+  padding: 14px 18px;
+  border-radius: var(--radius-md);
+  font-size: 0.9375rem;
+  color: var(--error);
+  text-align: left;
+  animation: shake 0.5s ease-in-out;
+}
+
+.auth-error {
+  margin-top: 6px;
+  padding: 8px 12px;
+  background: rgba(201, 122, 122, 0.1);
+  border-left: 3px solid var(--error);
+  border-radius: 6px;
+  font-size: 0.875rem;
+}
+
+.auth-error small {
+  color: var(--error);
+  display: block;
+  font-weight: 500;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-10px); }
+  75% { transform: translateX(10px); }
+}
+
+/* Links */
+.auth-container p {
+  margin-top: 20px;
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+}
+
+.auth-container a {
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.auth-container a:hover {
+  text-decoration: underline;
+}
+
+/* Animations */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .auth-container {
+    width: 90%;
+    padding: 36px 28px;
+  }
+
+  .auth-container h2 {
+    font-size: 1.75rem;
+  }
+
+  .auth-field {
+    margin: 0;
+  }
+}

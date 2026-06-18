@@ -1,0 +1,58 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+    <title>Login Page</title>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-greeting">
+            <p class="auth-eyebrow">Welcome to Cribsy</p>
+            <h2>Log in to your space</h2>
+            <p class="subtitle">Access your saved stays and keep trip planning on track.</p>
+        </div>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="auth-alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        <form method="POST">
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+                <div class="auth-alert">
+                    {% for error in form.non_field_errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <div class="auth-field">
+                <label for="id_username">Username</label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                    <div class="auth-error">
+                        {% for error in form.username.errors %}
+                            <small>{{ error }}</small>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="auth-field">
+                <label for="id_password">Password</label>
+                {{ form.password }}
+                {% if form.password.errors %}
+                    <div class="auth-error">
+                        {% for error in form.password.errors %}
+                            <small>{{ error }}</small>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <button type="submit">Login</button>
+        </form>
+        <p class="auth-switch">New here? <a href="{% url 'signup' %}">Create an account</a></p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,260 @@
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container" style="max-width: 900px; margin: 40px auto; padding: 0 24px;">
+  <!-- Header -->
+  <div style="margin-bottom: 40px; text-align: center;">
+    <h1 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 12px; background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+      Edit Home Space
+    </h1>
+    <p style="color: var(--gray-600); font-size: 1.125rem;">Update your space details and photos</p>
+  </div>
+
+  <form method="POST" enctype="multipart/form-data" id="homeSpaceForm">
+    {% csrf_token %}
+    
+    <!-- Basic Information Section -->
+    <div style="background: rgba(26, 26, 46, 0.8); backdrop-filter: blur(20px); border-radius: 20px; padding: 32px; margin-bottom: 24px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6); border: 1px solid rgba(139, 92, 246, 0.3);">
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid rgba(139, 92, 246, 0.3);">
+        <div style="width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%); display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+          📝
+        </div>
+        <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--gray-900); margin: 0;">Basic Information</h2>
+      </div>
+      
+      <div style="display: flex; flex-direction: column; gap: 24px;">
+        <!-- Title -->
+        <div>
+          <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--gray-800); font-size: 0.95rem;">
+            Title <span style="color: var(--error);">*</span>
+          </label>
+          <input type="text" name="title" id="id_title" required 
+                 style="width: 100%; padding: 14px 16px; border-radius: 12px; border: 2px solid var(--gray-300); background: rgba(26, 26, 46, 0.9); color: var(--gray-900); font-size: 1rem; transition: all 0.3s;"
+                 placeholder="e.g., Cozy 2BHK in Downtown" value="{{ form.title.value|default:space.title }}">
+          {% if form.title.errors %}
+            <div style="color: var(--error); font-size: 0.875rem; margin-top: 6px;">{{ form.title.errors }}</div>
+          {% endif %}
+        </div>
+
+        <!-- Description -->
+        <div>
+          <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--gray-800); font-size: 0.95rem;">
+            Description
+          </label>
+          <textarea name="description" id="id_description" rows="5"
+                    style="width: 100%; padding: 14px 16px; border-radius: 12px; border: 2px solid var(--gray-300); background: rgba(26, 26, 46, 0.9); color: var(--gray-900); font-size: 1rem; font-family: inherit; resize: vertical; transition: all 0.3s;"
+                    placeholder="Describe your space, amenities, nearby facilities, and what makes it special...">{{ form.description.value|default:space.description }}</textarea>
+          {% if form.description.errors %}
+            <div style="color: var(--error); font-size: 0.875rem; margin-top: 6px;">{{ form.description.errors }}</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Location Section -->
+    <div style="background: rgba(26, 26, 46, 0.8); backdrop-filter: blur(20px); border-radius: 20px; padding: 32px; margin-bottom: 24px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6); border: 1px solid rgba(139, 92, 246, 0.3);">
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid rgba(139, 92, 246, 0.3);">
+        <div style="width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%); display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+          📍
+        </div>
+        <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--gray-900); margin: 0;">Location</h2>
+      </div>
+      
+      <div style="display: flex; flex-direction: column; gap: 24px;">
+        <!-- Address -->
+        <div>
+          <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--gray-800); font-size: 0.95rem;">
+            Full Address
+          </label>
+          <input type="text" name="address" id="id_address"
+                 style="width: 100%; padding: 14px 16px; border-radius: 12px; border: 2px solid var(--gray-300); background: rgba(26, 26, 46, 0.9); color: var(--gray-900); font-size: 1rem; transition: all 0.3s;"
+                 placeholder="Enter complete address" value="{{ form.address.value|default:space.address }}">
+          {% if form.address.errors %}
+            <div style="color: var(--error); font-size: 0.875rem; margin-top: 6px;">{{ form.address.errors }}</div>
+          {% endif %}
+        </div>
+
+        <!-- City & State -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div>
+            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--gray-800); font-size: 0.95rem;">
+              City
+            </label>
+            <input type="text" name="city" id="id_city"
+                   style="width: 100%; padding: 14px 16px; border-radius: 12px; border: 2px solid var(--gray-300); background: rgba(26, 26, 46, 0.9); color: var(--gray-900); font-size: 1rem; transition: all 0.3s;"
+                   placeholder="City name" value="{{ form.city.value|default:space.city }}">
+            {% if form.city.errors %}
+              <div style="color: var(--error); font-size: 0.875rem; margin-top: 6px;">{{ form.city.errors }}</div>
+            {% endif %}
+          </div>
+          <div>
+            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--gray-800); font-size: 0.95rem;">
+              State
+            </label>
+            <input type="text" name="state" id="id_state"
+                   style="width: 100%; padding: 14px 16px; border-radius: 12px; border: 2px solid var(--gray-300); background: rgba(26, 26, 46, 0.9); color: var(--gray-900); font-size: 1rem; transition: all 0.3s;"
+                   placeholder="State name" value="{{ form.state.value|default:space.state }}">
+            {% if form.state.errors %}
+              <div style="color: var(--error); font-size: 0.875rem; margin-top: 6px;">{{ form.state.errors }}</div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pricing & Availability Section -->
+    <div style="background: rgba(26, 26, 46, 0.8); backdrop-filter: blur(20px); border-radius: 20px; padding: 32px; margin-bottom: 24px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6); border: 1px solid rgba(139, 92, 246, 0.3);">
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid rgba(139, 92, 246, 0.3);">
+        <div style="width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%); display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+          💰
+        </div>
+        <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--gray-900); margin: 0;">Pricing & Availability</h2>
+      </div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+        <div>
+          <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--gray-800); font-size: 0.95rem;">
+            Monthly Rent (₹)
+          </label>
+          <input type="number" name="rent" id="id_rent" min="0"
+                 style="width: 100%; padding: 14px 16px; border-radius: 12px; border: 2px solid var(--gray-300); background: rgba(26, 26, 46, 0.9); color: var(--gray-900); font-size: 1rem; transition: all 0.3s;"
+                 placeholder="25000" value="{{ form.rent.value|default:space.rent }}">
+          {% if form.rent.errors %}
+            <div style="color: var(--error); font-size: 0.875rem; margin-top: 6px;">{{ form.rent.errors }}</div>
+          {% endif %}
+        </div>
+        <div>
+          <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--gray-800); font-size: 0.95rem;">
+            Available From
+          </label>
+          <input type="date" name="available_from" id="id_available_from"
+                 style="width: 100%; padding: 14px 16px; border-radius: 12px; border: 2px solid var(--gray-300); background: rgba(26, 26, 46, 0.9); color: var(--gray-900); font-size: 1rem; transition: all 0.3s;"
+                 value="{{ form.available_from.value|default:space.available_from|date:'Y-m-d' }}">
+          {% if form.available_from.errors %}
+            <div style="color: var(--error); font-size: 0.875rem; margin-top: 6px;">{{ form.available_from.errors }}</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Photos Section -->
+    <div style="background: rgba(26, 26, 46, 0.8); backdrop-filter: blur(20px); border-radius: 20px; padding: 32px; margin-bottom: 32px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6); border: 1px solid rgba(139, 92, 246, 0.3);">
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid rgba(139, 92, 246, 0.3);">
+        <div style="width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%); display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+          📸
+        </div>
+        <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--gray-900); margin: 0;">Photos</h2>
+      </div>
+      
+      <div>
+        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--gray-800); font-size: 0.95rem;">
+          Add More Photos
+        </label>
+        <div style="position: relative;">
+          <input type="file" name="photos" id="id_photos" multiple accept="image/*"
+                 style="width: 100%; padding: 14px 16px; border-radius: 12px; border: 2px dashed var(--gray-300); background: rgba(26, 26, 46, 0.9); color: var(--gray-900); font-size: 1rem; cursor: pointer; transition: all 0.3s;"
+                 onchange="previewPhotos(this)">
+          <div id="photoPreview" style="display: none; margin-top: 16px; display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px;"></div>
+        </div>
+        <p style="color: var(--gray-600); font-size: 0.875rem; margin-top: 8px; line-height: 1.5;">
+          💡 <strong>Tip:</strong> You can upload additional photos. Supported formats: JPG, PNG, GIF
+        </p>
+      </div>
+    </div>
+
+    <!-- Existing Photos -->
+    {% if existing_photos %}
+      <div style="background: rgba(26, 26, 46, 0.8); backdrop-filter: blur(20px); border-radius: 20px; padding: 32px; margin-bottom: 32px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6); border: 1px solid rgba(139, 92, 246, 0.3);">
+        <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 24px; color: var(--gray-900); display: flex; align-items: center; gap: 12px;">
+          <span style="font-size: 1.5rem;">🖼️</span> Existing Photos
+        </h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px;">
+          {% for photo in existing_photos %}
+            <div style="position: relative; aspect-ratio: 1; border-radius: 12px; overflow: hidden; border: 2px solid rgba(139, 92, 246, 0.3);">
+              <img src="{{ photo.photo.url }}" alt="Photo" style="width: 100%; height: 100%; object-fit: cover;">
+              <a href="{% url 'delete_home_space_photo' photo.id %}" onclick="return confirm('Are you sure you want to delete this photo?');" 
+                 style="position: absolute; top: 8px; right: 8px; background: rgba(239, 68, 68, 0.9); color: white; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 0.875rem; font-weight: 600; backdrop-filter: blur(10px);">
+                🗑️ Delete
+              </a>
+              {% if photo.is_primary %}
+                <div style="position: absolute; bottom: 8px; left: 8px; background: linear-gradient(135deg, #10B981 0%, #059669 100%); color: white; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600;">
+                  ✓ Primary
+                </div>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    <!-- Submit Buttons -->
+    <div style="display: flex; gap: 16px; margin-top: 8px;">
+      <button type="submit" style="flex: 1; padding: 16px 32px; background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%); color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 1.1rem; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4); display: flex; align-items: center; justify-content: center; gap: 8px;">
+        <span>💾</span> Update Home Space
+      </button>
+      <a href="{% url 'home_space_detail' space.id %}" style="padding: 16px 32px; background: rgba(139, 92, 246, 0.15); color: var(--primary); text-decoration: none; border-radius: 12px; font-weight: 600; font-size: 1.1rem; text-align: center; border: 1px solid rgba(139, 92, 246, 0.3); display: flex; align-items: center; justify-content: center;">
+        Cancel
+      </a>
+    </div>
+  </form>
+</div>
+
+<script>
+function previewPhotos(input) {
+  const preview = document.getElementById('photoPreview');
+  preview.innerHTML = '';
+  
+  if (input.files && input.files.length > 0) {
+    preview.style.display = 'grid';
+    Array.from(input.files).forEach((file) => {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const div = document.createElement('div');
+        div.style.position = 'relative';
+        div.style.aspectRatio = '1';
+        div.style.borderRadius = '12px';
+        div.style.overflow = 'hidden';
+        div.style.border = '2px solid rgba(139, 92, 246, 0.3)';
+        
+        const img = document.createElement('img');
+        img.src = e.target.result;
+        img.style.width = '100%';
+        img.style.height = '100%';
+        img.style.objectFit = 'cover';
+        
+        div.appendChild(img);
+        preview.appendChild(div);
+      };
+      reader.readAsDataURL(file);
+    });
+  } else {
+    preview.style.display = 'none';
+  }
+}
+
+// Add focus styles
+document.querySelectorAll('#homeSpaceForm input, #homeSpaceForm textarea').forEach(input => {
+  input.addEventListener('focus', function() {
+    this.style.borderColor = 'var(--primary)';
+    this.style.boxShadow = '0 0 0 4px rgba(139, 92, 246, 0.2)';
+  });
+  input.addEventListener('blur', function() {
+    this.style.borderColor = 'var(--gray-300)';
+    this.style.boxShadow = 'none';
+  });
+});
+</script>
+
+<style>
+@media (max-width: 768px) {
+  .container {
+    padding: 0 16px;
+  }
+  
+  div[style*="grid-template-columns: 1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+</style>
+{% endblock %}

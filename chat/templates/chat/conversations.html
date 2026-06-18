@@ -1,0 +1,139 @@
+{% extends 'users/base.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+
+<div class="chat-container">
+  <div class="chat-sidebar">
+    <div class="chat-sidebar-header">
+      <h2>💬 Conversations</h2>
+      <a href="{% url 'search' %}" class="btn-new-chat">+ New</a>
+    </div>
+    
+    <div class="chat-list-full">
+      {% for partner in partners %}
+        <a href="{% url 'conversation' partner.username %}" class="chat-item">
+          <div class="chat-avatar">
+            {% if partner.profile.photo %}
+              <img src="{{ partner.profile.photo.url }}" alt="{{ partner.username }}">
+            {% else %}
+              <div class="avatar-placeholder">{{ partner.username|slice:":1"|upper }}</div>
+            {% endif %}
+            <span class="online-indicator"></span>
+          </div>
+          <div class="chat-info">
+            <div class="chat-header">
+              <h4>{{ partner.profile.full_name|default:partner.username }}</h4>
+            </div>
+            <p class="chat-preview">Click to start chatting</p>
+          </div>
+        </a>
+      {% empty %}
+        <div class="empty-state">
+          <p>No conversations yet</p>
+          <a href="{% url 'search' %}" class="btn-primary">Find People</a>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+  
+  <div class="chat-main-empty">
+    <div class="empty-chat-state">
+      <div class="empty-chat-icon">💬</div>
+      <h3>Select a conversation</h3>
+      <p>Choose a conversation from the sidebar to start chatting</p>
+    </div>
+  </div>
+</div>
+
+<style>
+.chat-container {
+  display: grid;
+  grid-template-columns: 350px 1fr;
+  height: calc(100vh - 200px);
+  max-width: 1400px;
+  margin: 40px auto;
+  background: var(--bg-card);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  border: 1px solid rgba(74, 124, 122, 0.3);
+}
+
+.chat-sidebar {
+  border-right: 1px solid rgba(74, 124, 122, 0.3);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.chat-sidebar-header {
+  padding: 24px;
+  border-bottom: 1px solid rgba(74, 124, 122, 0.3);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chat-sidebar-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.btn-new-chat {
+  padding: 8px 16px;
+  background: var(--gradient-primary);
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: all 0.3s;
+}
+
+.btn-new-chat:hover {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-md);
+}
+
+.chat-list-full {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+}
+
+.chat-main-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-primary);
+}
+
+.empty-chat-state {
+  text-align: center;
+  padding: 40px;
+}
+
+.empty-chat-icon {
+  font-size: 4rem;
+  margin-bottom: 20px;
+}
+
+.empty-chat-state h3 {
+  margin: 0 0 12px;
+  color: var(--gray-900);
+  font-size: 1.5rem;
+}
+
+.empty-chat-state p {
+  color: var(--gray-600);
+  margin: 0;
+}
+</style>
+{% endblock %}

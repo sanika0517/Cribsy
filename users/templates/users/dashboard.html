@@ -1,0 +1,183 @@
+{% extends 'users/base.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+
+<div class="dashboard-container">
+  <!-- Left Sidebar - Profile & Quick Actions -->
+  <aside class="dashboard-sidebar">
+    <!-- Profile Card -->
+    <div class="profile-card-dash">
+      {% if profile.photo %}
+        <img src="{{ profile.photo.url }}" alt="Profile" class="profile-avatar-dash">
+      {% else %}
+        <div class="profile-avatar-dash placeholder">
+          {{ request.user.username|slice:":1"|upper }}
+        </div>
+      {% endif %}
+      <h3>{{ profile.full_name|default:request.user.username }}</h3>
+      <p class="profile-username-dash">@{{ request.user.username }}</p>
+      <div class="profile-stats-dash">
+        <div class="stat-item">
+          <span class="stat-value">{{ profile.city|default:"—" }}</span>
+          <span class="stat-label">Location</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-value">₹{{ profile.budget|default:"—" }}</span>
+          <span class="stat-label">Budget</span>
+        </div>
+      </div>
+      <a href="{% url 'my_profile' %}" class="btn-view-profile">View Full Profile</a>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+      <a href="{% url 'search' %}" class="action-btn">
+        <span class="action-icon">🔍</span>
+        <span>Search</span>
+      </a>
+      <a href="{% url 'requests' %}" class="action-btn">
+        <span class="action-icon">📬</span>
+        <span>Requests</span>
+        {% if pending_requests %}
+          <span class="badge">{{ pending_requests|length }}</span>
+        {% endif %}
+      </a>
+      <a href="{% url 'conversations' %}" class="action-btn">
+        <span class="action-icon">💬</span>
+        <span>Chats</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="dashboard-main">
+    <!-- Notifications Bar -->
+    <section class="notifications-section">
+      <div class="section-header">
+        <h2>🔔 Notifications</h2>
+        {% if pending_requests %}
+          <span class="notification-count">{{ pending_requests|length }} new</span>
+        {% endif %}
+      </div>
+      
+      {% if pending_requests %}
+        <div class="notifications-list">
+          {% for req in pending_requests %}
+            <div class="notification-item">
+              <div class="notification-avatar">
+                {% if req.sender.profile.photo %}
+                  <img src="{{ req.sender.profile.photo.url }}" alt="{{ req.sender.username }}">
+                {% else %}
+                  <div class="avatar-placeholder">{{ req.sender.username|slice:":1"|upper }}</div>
+                {% endif %}
+              </div>
+              <div class="notification-content">
+                <p class="notification-text">
+                  <strong>{{ req.sender.profile.full_name|default:req.sender.username }}</strong> sent you a connection request
+                </p>
+                <span class="notification-time">{{ req.created_at|timesince }} ago</span>
+              </div>
+              <div class="notification-actions">
+                <a href="{% url 'accept_request' req.id %}" class="btn-accept">Accept</a>
+                <a href="{% url 'reject_request' req.id %}" class="btn-reject">Reject</a>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty-state">
+          <p>No new notifications</p>
+        </div>
+      {% endif %}
+    </section>
+
+    <!-- Chat Section -->
+    <section class="chat-section">
+      <div class="section-header">
+        <h2>💬 Recent Chats</h2>
+        <a href="{% url 'conversations' %}" class="view-all-link">View All</a>
+      </div>
+      
+      {% if connections %}
+        <div class="chat-list">
+          {% for conn in connections %}
+            <a href="{% url 'conversation' conn.user.username %}" class="chat-item">
+              <div class="chat-avatar">
+                {% if conn.user.profile.photo %}
+                  <img src="{{ conn.user.profile.photo.url }}" alt="{{ conn.user.username }}">
+                {% else %}
+                  <div class="avatar-placeholder">{{ conn.user.username|slice:":1"|upper }}</div>
+                {% endif %}
+                <span class="online-indicator"></span>
+              </div>
+              <div class="chat-info">
+                <div class="chat-header">
+                  <h4>{{ conn.user.profile.full_name|default:conn.user.username }}</h4>
+                  {% if conn.last_message %}
+                    <span class="chat-time">{{ conn.last_message.timestamp|timesince }} ago</span>
+                  {% endif %}
+                </div>
+                {% if conn.last_message %}
+                  <p class="chat-preview">
+                    {% if conn.last_message.sender == request.user %}You: {% endif %}
+                    {{ conn.last_message.text|truncatechars:50 }}
+                  </p>
+                {% else %}
+                  <p class="chat-preview">No messages yet</p>
+                {% endif %}
+              </div>
+            </a>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty-state">
+          <p>No connections yet. Start by sending connection requests!</p>
+          <a href="{% url 'search' %}" class="btn-primary">Find People</a>
+        </div>
+      {% endif %}
+    </section>
+
+    <!-- Feedback Section -->
+    <section class="feedback-section">
+      <div class="section-header">
+        <h2>⭐ Share Your Feedback</h2>
+      </div>
+      
+      <div class="feedback-card">
+        {% if user_feedback %}
+          <div class="feedback-submitted">
+            <p>Thank you for your feedback!</p>
+            <div class="rating-display">
+              {% for i in "12345" %}
+                <span class="star {% if forloop.counter <= user_feedback.rating %}filled{% endif %}">⭐</span>
+              {% endfor %}
+            </div>
+            {% if user_feedback.comment %}
+              <p class="feedback-comment">"{{ user_feedback.comment }}"</p>
+            {% endif %}
+            <small>Submitted {{ user_feedback.created_at|timesince }} ago</small>
+          </div>
+        {% else %}
+          <form method="POST" class="feedback-form">
+            {% csrf_token %}
+            <input type="hidden" name="submit_feedback" value="1">
+            
+            <div class="rating-input">
+              <label>Rate your experience:</label>
+              {{ feedback_form.rating }}
+            </div>
+            
+            <div class="comment-input">
+              <label>Your feedback (optional):</label>
+              {{ feedback_form.comment }}
+            </div>
+            
+            <button type="submit" class="btn-submit-feedback">Submit Feedback</button>
+          </form>
+        {% endif %}
+      </div>
+    </section>
+  </main>
+</div>
+{% endblock %}

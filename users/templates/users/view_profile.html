@@ -1,0 +1,104 @@
+{% extends "users/base.html" %}
+{% block content %}
+<div class="profile-shell profile-view">
+    <div class="profile-hero">
+        <p class="profile-eyebrow">Your profile</p>
+        <div style="display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap;">
+            <h2>{{ profile.full_name|default:profile.user.username }}</h2>
+            {% if profile.verification_status == 'verified' or profile.verified %}
+                <span class="verified-badge" title="Verified by admin">
+                    <span style="font-size: 1.2rem;">✓</span> Verified
+                </span>
+            {% elif profile.verification_status == 'pending' %}
+                <span class="pending-badge" title="Pending admin review">
+                    <span style="font-size: 1.2rem;">⏳</span> Pending Review
+                </span>
+            {% elif profile.verification_status == 'rejected' %}
+                <span class="rejected-badge" title="Profile rejected">
+                    <span style="font-size: 1.2rem;">✗</span> Rejected
+                </span>
+            {% endif %}
+        </div>
+        <p class="profile-hero-subtitle">Keep your details fresh so other members can discover their ideal roommate match.</p>
+        {% if can_edit %}
+            <a href="{% url 'edit_profile' profile.user.username %}" class="profile-edit-link">Edit profile</a>
+        {% endif %}
+    </div>
+
+    <div class="profile-card profile-overview">
+        <div class="profile-avatar">
+            {% if profile.photo %}
+                <img src="{{ profile.photo.url }}" alt="Profile Photo" class="profile-photo">
+            {% else %}
+                <div class="profile-photo placeholder">
+                    {{ profile.user.username|slice:":1"|upper }}
+                </div>
+            {% endif %}
+        </div>
+        <div class="profile-overview-body">
+            <p class="profile-username">@{{ profile.user.username }}</p>
+            <p class="profile-bio">{{ profile.bio|default:"Tell your future flatmate a little more about you." }}</p>
+            <div class="profile-stats">
+                <div class="profile-stat">
+                    <span class="label">Age</span>
+                    <span class="value">{{ profile.age|default:"—" }}</span>
+                </div>
+                <div class="profile-stat">
+                    <span class="label">Budget</span>
+                    <span class="value">₹{{ profile.budget|default:"—" }}</span>
+                </div>
+                <div class="profile-stat">
+                    <span class="label">Location</span>
+                    <span class="value">{% if profile.area %}{{ profile.area }}{% if profile.city %}, {{ profile.city }}{% endif %}{% elif profile.city %}{{ profile.city }}{% else %}—{% endif %}{% if profile.state %}, {{ profile.state }}{% endif %}</span>
+                </div>
+                <div class="profile-stat">
+                    <span class="label">Verified</span>
+                    <span class="value">{{ profile.verified|yesno:"Yes,No" }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-sections-grid">
+        <section class="profile-section">
+            <h4>Basic Info</h4>
+            <dl class="profile-info-list">
+                <div><dt>Gender</dt><dd>{{ profile.gender|default:"—" }}</dd></div>
+                <div><dt>Date of birth</dt><dd>{{ profile.date_of_birth|date:"M d, Y"|default:"—" }}</dd></div>
+                <div><dt>Religion</dt><dd>{{ profile.religion|default:"—" }}</dd></div>
+                <div><dt>Marital status</dt><dd>{{ profile.marital_status|default:"—" }}</dd></div>
+            </dl>
+        </section>
+
+        <section class="profile-section">
+            <h4>Contact</h4>
+            <dl class="profile-info-list">
+                <div><dt>Phone</dt><dd>{{ profile.phone|default:"—" }}</dd></div>
+                <div><dt>Area</dt><dd>{{ profile.area|default:"—" }}</dd></div>
+                {% if profile.city %}
+                <div><dt>City</dt><dd>{{ profile.city }}</dd></div>
+                {% endif %}
+                {% if profile.state %}
+                <div><dt>State</dt><dd>{{ profile.state }}</dd></div>
+                {% endif %}
+            </dl>
+        </section>
+
+        <section class="profile-section">
+            <h4>Education & career</h4>
+            <dl class="profile-info-list">
+                <div><dt>Qualification</dt><dd>{{ profile.qualification|default:"—" }}</dd></div>
+                <div><dt>Occupation</dt><dd>{{ profile.occupation|default:"—" }}</dd></div>
+            </dl>
+        </section>
+
+        <section class="profile-section">
+            <h4>Lifestyle</h4>
+            <dl class="profile-info-list">
+                <div><dt>Hobbies</dt><dd>{{ profile.hobbies|default:"—" }}</dd></div>
+                <div><dt>Bio</dt><dd>{{ profile.bio|default:"—" }}</dd></div>
+            </dl>
+        </section>
+    </div>
+</div>
+{% endblock %}

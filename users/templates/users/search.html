@@ -1,0 +1,94 @@
+{% extends 'users/base.html' %}
+{% block content %}
+<div class="container search-page">
+  <div class="search-header">
+    <div>
+      <p class="search-eyebrow">Discover matches</p>
+      <h3>Search Flatmates</h3>
+    </div>
+    <p class="search-subtitle">Fine-tune your filters and tap any card to read their full story.</p>
+  </div>
+
+  <form method="get" class="search-form search-form-card">
+    <div class="form-field">
+      <label for="search-area">Area</label>
+      <input id="search-area" type="text" name="area" class="input" placeholder="Enter area/locality (e.g., Koramangala, Bandra)" value="{{ request.GET.area }}">
+    </div>
+    <div class="form-field">
+      <label for="search-gender">Gender</label>
+      <select id="search-gender" name="gender" class="select">
+        <option value="">Any Gender</option>
+        <option value="Male" {% if request.GET.gender == "Male" %}selected{% endif %}>Male</option>
+        <option value="Female" {% if request.GET.gender == "Female" %}selected{% endif %}>Female</option>
+        <option value="Other" {% if request.GET.gender == "Other" %}selected{% endif %}>Other</option>
+      </select>
+    </div>
+    <div class="form-field">
+      <label for="search-budget">Max Budget (₹)</label>
+      <input id="search-budget" type="number" name="budget" class="input" placeholder="25000" value="{{ request.GET.budget }}">
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-primary">Search</button>
+    </div>
+  </form>
+
+  <div class="search-grid">
+    {% for item in profiles_data %}
+      {% with p=item.profile %}
+      <article class="search-card">
+        <div class="search-card-media">
+          {% if p.photo %}
+            <img src="{{ p.photo.url }}" alt="{{ p.user.username }} profile photo">
+          {% else %}
+            <div class="search-card-placeholder">
+              {{ p.user.username|slice:":1"|upper }}
+            </div>
+          {% endif %}
+        </div>
+        <div class="search-card-body">
+          <div class="search-card-title">
+            <h4>{{ p.full_name|default:p.user.username }}</h4>
+            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+              {% if p.verification_status == 'verified' or p.verified %}
+                <span class="search-tag" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); color: white;">✓ Verified</span>
+              {% endif %}
+              {% if request.user == p.user %}
+                <span class="search-tag">You</span>
+              {% elif item.is_matched %}
+                <span class="search-tag" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); color: white;">Connected</span>
+              {% elif item.sent_request %}
+                <span class="search-tag" style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); color: white;">Pending</span>
+              {% endif %}
+            </div>
+          </div>
+          <p class="search-card-meta">
+            {{ p.area|default:"Area unknown" }}
+            <span aria-hidden="true">•</span>
+            ₹{{ p.budget|default:"—" }}
+          </p>
+          <p class="search-card-snippet">
+            {{ p.bio|default:"No bio shared yet."|truncatechars:120 }}
+          </p>
+          <div class="search-card-actions">
+            <a href="{% url 'view_profile' p.user.username %}" class="btn btn-outline">View Profile</a>
+            {% if request.user != p.user %}
+              {% if item.is_matched %}
+                <a href="{% url 'conversation' p.user.username %}" class="btn btn-primary">Chat</a>
+              {% elif item.sent_request %}
+                <span class="btn" style="background: var(--gray-300); color: var(--gray-600); cursor: not-allowed;">Request Sent</span>
+              {% elif item.received_request %}
+                <a href="{% url 'requests' %}" class="btn btn-primary">Respond</a>
+              {% else %}
+                <a href="{% url 'send_request' p.user.id %}" class="btn btn-primary">Send Request</a>
+              {% endif %}
+            {% endif %}
+          </div>
+        </div>
+      </article>
+      {% endwith %}
+    {% empty %}
+      <p class="search-empty-state">No results found. Try broadening your filters.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

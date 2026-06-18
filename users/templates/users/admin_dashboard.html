@@ -1,0 +1,210 @@
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+
+<div class="container" style="max-width: 1400px; margin: 40px auto; padding: 0 24px;">
+  <div style="margin-bottom: 40px;">
+    <h1 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 12px; color: var(--primary);">
+      Admin Dashboard - Profile Verification
+    </h1>
+    <p style="color: var(--gray-500); font-size: 1.125rem;">Review and verify user profiles</p>
+  </div>
+
+  <!-- Stats Cards -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 32px;">
+    <div style="background: var(--bg-card); backdrop-filter: blur(20px); border-radius: 20px; padding: 24px; box-shadow: var(--shadow-lg); border: 1px solid rgba(74, 124, 122, 0.3);">
+      <div style="font-size: 2rem; font-weight: 800; color: var(--primary); margin-bottom: 8px;">{{ stats.total }}</div>
+      <div style="color: var(--gray-500); font-weight: 600;">Total Profiles</div>
+    </div>
+    <div style="background: var(--bg-card); backdrop-filter: blur(20px); border-radius: 20px; padding: 24px; box-shadow: var(--shadow-lg); border: 1px solid rgba(74, 124, 122, 0.3);">
+      <div style="font-size: 2rem; font-weight: 800; color: #F59E0B; margin-bottom: 8px;">{{ stats.pending }}</div>
+      <div style="color: var(--gray-500); font-weight: 600;">Pending Review</div>
+    </div>
+    <div style="background: var(--bg-card); backdrop-filter: blur(20px); border-radius: 20px; padding: 24px; box-shadow: var(--shadow-lg); border: 1px solid rgba(74, 124, 122, 0.3);">
+      <div style="font-size: 2rem; font-weight: 800; color: var(--secondary); margin-bottom: 8px;">{{ stats.verified }}</div>
+      <div style="color: var(--gray-500); font-weight: 600;">Verified</div>
+    </div>
+    <div style="background: var(--bg-card); backdrop-filter: blur(20px); border-radius: 20px; padding: 24px; box-shadow: var(--shadow-lg); border: 1px solid rgba(74, 124, 122, 0.3);">
+      <div style="font-size: 2rem; font-weight: 800; color: #EF4444; margin-bottom: 8px;">{{ stats.rejected }}</div>
+      <div style="color: var(--gray-500); font-weight: 600;">Rejected</div>
+    </div>
+  </div>
+
+  <!-- Filter Tabs -->
+  <div style="display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap;">
+    <a href="?status=all" 
+       style="padding: 10px 20px; border-radius: 12px; text-decoration: none; font-weight: 600; transition: all 0.3s; {% if current_filter == 'all' %}background: var(--gradient-primary); color: white;{% else %}background: rgba(74, 124, 122, 0.1); color: var(--text-primary); border: 1px solid rgba(74, 124, 122, 0.3);{% endif %}">
+      All
+    </a>
+    <a href="?status=pending" 
+       style="padding: 10px 20px; border-radius: 12px; text-decoration: none; font-weight: 600; transition: all 0.3s; {% if current_filter == 'pending' %}background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); color: white;{% else %}background: rgba(245, 158, 11, 0.2); color: var(--gray-700);{% endif %}">
+      Pending ({{ stats.pending }})
+    </a>
+    <a href="?status=verified" 
+       style="padding: 10px 20px; border-radius: 12px; text-decoration: none; font-weight: 600; transition: all 0.3s; {% if current_filter == 'verified' %}background: var(--secondary); color: white;{% else %}background: rgba(143, 175, 159, 0.1); color: var(--text-primary); border: 1px solid rgba(143, 175, 159, 0.3);{% endif %}">
+      Verified ({{ stats.verified }})
+    </a>
+    <a href="?status=rejected" 
+       style="padding: 10px 20px; border-radius: 12px; text-decoration: none; font-weight: 600; transition: all 0.3s; {% if current_filter == 'rejected' %}background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%); color: white;{% else %}background: rgba(239, 68, 68, 0.2); color: var(--gray-700);{% endif %}">
+      Rejected ({{ stats.rejected }})
+    </a>
+  </div>
+
+  <!-- Profiles List -->
+  <div style="background: var(--bg-card); backdrop-filter: blur(20px); border-radius: 24px; padding: 32px; box-shadow: var(--shadow-lg); border: 1px solid rgba(74, 124, 122, 0.3);">
+    {% if profiles %}
+      <div style="display: grid; gap: 20px;">
+        {% for profile in profiles %}
+          <div style="padding: 24px; background: rgba(74, 124, 122, 0.1); border-radius: 16px; border: 1px solid rgba(74, 124, 122, 0.3);">
+            <div style="display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap;">
+              <!-- Profile Photo -->
+              <div>
+                {% if profile.photo %}
+                  <img src="{{ profile.photo.url }}" alt="{{ profile.user.username }}" style="width: 80px; height: 80px; border-radius: 12px; object-fit: cover; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
+                {% else %}
+                  <div style="width: 80px; height: 80px; border-radius: 12px; background: var(--gradient-primary); display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 2rem;">
+                    {{ profile.user.username|slice:":1"|upper }}
+                  </div>
+                {% endif %}
+              </div>
+
+              <!-- Profile Info -->
+              <div style="flex: 1; min-width: 300px;">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; flex-wrap: wrap;">
+                  <h3 style="margin: 0; font-size: 1.25rem; font-weight: 700; color: var(--gray-900);">
+                    {{ profile.full_name|default:profile.user.username }}
+                  </h3>
+                  <span style="padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
+                    {% if profile.verification_status == 'verified' %}background: var(--secondary); color: white;
+                    {% elif profile.verification_status == 'pending' %}background: var(--warning); color: white;
+                    {% else %}background: var(--error); color: white;{% endif %}">
+                    {{ profile.get_verification_status_display }}
+                  </span>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 16px; font-size: 0.875rem; color: var(--gray-500);">
+                  <div><strong>Username:</strong> @{{ profile.user.username }}</div>
+                  <div><strong>Email:</strong> {{ profile.user.email }}</div>
+                  <div><strong>City:</strong> {{ profile.city|default:"—" }}</div>
+                  <div><strong>Phone:</strong> {{ profile.phone|default:"—" }}</div>
+                  <div><strong>Joined:</strong> {{ profile.user.date_joined|date:"M d, Y" }}</div>
+                  {% if profile.verified_at %}
+                    <div><strong>Verified:</strong> {{ profile.verified_at|date:"M d, Y" }} by {{ profile.verified_by.username|default:"Admin" }}</div>
+                  {% endif %}
+                </div>
+
+                <!-- ID Proof -->
+                {% if profile.id_proof %}
+                  <div style="margin-bottom: 16px;">
+                    <a href="{{ profile.id_proof.url }}" target="_blank" style="display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; background: rgba(74, 124, 122, 0.1); border-radius: 8px; color: var(--primary); text-decoration: none; font-weight: 600; font-size: 0.875rem; border: 1px solid rgba(74, 124, 122, 0.3);">
+                      📄 View ID Proof
+                    </a>
+                  </div>
+                {% else %}
+                  <div style="margin-bottom: 16px; padding: 8px 16px; background: rgba(239, 68, 68, 0.2); border-radius: 8px; color: #FCA5A5; font-size: 0.875rem; font-weight: 600; border: 1px solid rgba(239, 68, 68, 0.3);">
+                    ⚠️ No ID proof uploaded
+                  </div>
+                {% endif %}
+
+                <!-- Actions -->
+                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                  <a href="{% url 'view_profile' profile.user.username %}" target="_blank" style="padding: 10px 20px; background: rgba(74, 124, 122, 0.1); color: var(--primary); text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 0.875rem; transition: all 0.3s; border: 1px solid rgba(74, 124, 122, 0.3);">
+                    View Full Profile
+                  </a>
+                  
+                  {% if profile.verification_status == 'pending' %}
+                    <a href="{% url 'verify_profile' profile.id %}" 
+                       onclick="return confirm('Are you sure you want to verify this profile?');"
+                       style="padding: 10px 20px; background: var(--secondary); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 0.875rem; transition: all 0.3s;">
+                      ✓ Verify
+                    </a>
+                    <a href="{% url 'reject_profile' profile.id %}" 
+                       onclick="return confirm('⚠️ WARNING: Rejecting this profile will permanently DELETE the user account and all associated data. Are you absolutely sure?');"
+                       style="padding: 10px 20px; background: var(--error); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 0.875rem; transition: all 0.3s;">
+                      ✗ Reject & Delete Account
+                    </a>
+                    <a href="{% url 'delete_fake_profile' profile.id %}" 
+                       onclick="return confirm('⚠️ WARNING: This will permanently delete the user account and all associated data. Are you absolutely sure this is a fake profile?');"
+                       style="padding: 10px 20px; background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 0.875rem; transition: all 0.3s;">
+                      🗑️ Delete Fake Account
+                    </a>
+                  {% elif profile.verification_status == 'verified' %}
+                    <span style="padding: 10px 20px; background: rgba(143, 175, 159, 0.2); color: var(--secondary); border-radius: 8px; font-weight: 600; font-size: 0.875rem; border: 1px solid rgba(143, 175, 159, 0.3);">
+                      ✓ Already Verified
+                    </span>
+                    <a href="{% url 'delete_fake_profile' profile.id %}" 
+                       onclick="return confirm('⚠️ WARNING: This will permanently delete a VERIFIED account. Are you absolutely sure?');"
+                       style="padding: 10px 20px; background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 0.875rem;">
+                      🗑️ Delete Account
+                    </a>
+                  {% else %}
+                    <a href="{% url 'verify_profile' profile.id %}" 
+                       onclick="return confirm('Verify this previously rejected profile?');"
+                       style="padding: 10px 20px; background: linear-gradient(135deg, #10B981 0%, #059669 100%); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 0.875rem;">
+                      ✓ Verify Now
+                    </a>
+                    <a href="{% url 'delete_fake_profile' profile.id %}" 
+                       onclick="return confirm('⚠️ WARNING: This will permanently delete the user account. Continue?');"
+                       style="padding: 10px 20px; background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 0.875rem;">
+                      🗑️ Delete Account
+                    </a>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div style="text-align: center; padding: 60px 20px;">
+        <div style="font-size: 4rem; margin-bottom: 20px;">📋</div>
+        <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 12px; color: var(--gray-900);">No profiles found</h3>
+        <p style="color: var(--gray-500);">No profiles match the current filter.</p>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<style>
+.verified-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--secondary);
+  color: white;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.875rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.pending-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--warning);
+  color: white;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.875rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.rejected-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--error);
+  color: white;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.875rem;
+  box-shadow: var(--shadow-soft);
+}
+</style>
+{% endblock %}

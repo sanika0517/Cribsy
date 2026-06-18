@@ -1,0 +1,20 @@
+{% extends 'users/base.html' %}
+{% block content %}
+<h3>Swipe</h3>
+{% if candidate %}
+  <div class="card" style="max-width: 420px;">
+    <img src="{{ candidate.profile.photo.url }}" class="card-img-top" style="height:320px;object-fit:cover" alt="photo">
+    <div class="card-body">
+      <h5>{{ candidate.username }}, {{ candidate.profile.age }}</h5>
+      <p>{{ candidate.profile.city }} • ₹{{ candidate.profile.budget }}</p>
+      <form method="post" action="{% url 'swipe_action' candidate.id %}">
+        {% csrf_token %}
+        <button name="like" value="true" class="btn btn-success">Like</button>
+        <button name="like" value="false" class="btn btn-secondary">Skip</button>
+      </form>
+    </div>
+  </div>
+{% else %}
+  <p>No more profiles nearby — try adjusting filters.</p>
+{% endif %}
+{% endblock %}
